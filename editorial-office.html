@@ -1,12 +1,325 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Editorial Office / 编辑部 · 瑞瓦肖评论</title><link rel="stylesheet" href="assets/css/style.css"></head><body>
-<header class="site-header"><nav class="nav"><a class="brand" href="index.html"><span class="brand-mark">57</span><span>瑞瓦肖评论 / Revachol Review</span></a><div class="nav-links"><a href="vol1-no1/index.html">Current Issue</a><a href="about.html">About</a><a href="editorial-policy.html">Editorial Policy</a><a href="submissions.html">Submissions</a><a href="editorial-office.html">Editorial Office</a><a href="legal-notice.html">Legal Notice</a></div></nav></header>
-<main class="article-shell"><header class="article-header"><div class="kicker">Automated Editorial Desk</div><h1 class="article-title">自动编辑部</h1><p class="article-subtitle">A semi-automated editorial workflow for Revachol Review.</p></header>
-<section class="article-body">
-<h2>工作流</h2>
-<div class="workflow"><div><span>1</span><strong>Submit</strong><p>作者通过 GitHub Issue 表单投稿。</p></div><div><span>2</span><strong>Agent Review</strong><p>GitHub Actions 调用编辑 Agent 自动初审。</p></div><div><span>3</span><strong>Editor Decision</strong><p>金·曷城根据报告作出编辑决定。</p></div><div><span>4</span><strong>Publish</strong><p>录用稿件制作网页、PDF，并上传 Zenodo 生成 DOI。</p></div></div>
-<h2>标签体系</h2>
-<table class="data-table"><tr><th>Label</th><th>用途</th></tr><tr><td>submission</td><td>投稿入口。</td></tr><tr><td>pending-review</td><td>等待自动审稿。</td></tr><tr><td>agent-reviewed</td><td>Agent 已生成报告。</td></tr><tr><td>fact-check-needed</td><td>需要事实核验。</td></tr><tr><td>legal-risk</td><td>存在法律或诽谤风险。</td></tr><tr><td>revise</td><td>需要修改。</td></tr><tr><td>accepted</td><td>录用。</td></tr><tr><td>published</td><td>已经发布。</td></tr></table>
-<h2>原则</h2>
-<blockquote>Agent 只做初审，不替代主编判断；自动化只管理文本流程，不决定文章真理。</blockquote>
-<p>本系统尤其关注事实来源、法律风险、性别化表达、被害人中心原则和风格一致性。</p>
-</section></main><footer class="footer">© 2026 Revachol Review / 瑞瓦肖评论. Independent open essay journal. Built for GitHub Pages · <a href="legal-notice.html">Legal Notice</a>.</footer></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>自动编辑部 / Editorial Office</title>
+  <style>
+:root{
+  --bg:#0b0d10;
+  --panel:#12161d;
+  --panel2:#171c24;
+  --text:#e8e2d6;
+  --muted:#a99f90;
+  --faint:#6f685f;
+  --line:#2a303a;
+  --accent:#d6a85f;
+  --accent2:#b86f52;
+  --blue:#7ca7c7;
+  --danger:#b75f5f;
+  --green:#7aa172;
+  --shadow:0 20px 60px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(214,168,95,.12), transparent 28%),
+    radial-gradient(circle at 78% 4%, rgba(124,167,199,.10), transparent 24%),
+    linear-gradient(180deg, #090b0e 0%, #0b0d10 45%, #101216 100%);
+  color:var(--text);
+  font-family: ui-serif, "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", Georgia, serif;
+  line-height:1.72;
+  min-height:100vh;
+}
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:underline}
+.site{
+  width:min(1120px, calc(100% - 36px));
+  margin:0 auto;
+}
+.topbar{
+  position:sticky; top:0; z-index:10;
+  backdrop-filter: blur(14px);
+  background:rgba(11,13,16,.78);
+  border-bottom:1px solid rgba(214,168,95,.18);
+}
+.nav{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 0;
+  gap:20px;
+}
+.brand{
+  display:flex; align-items:center; gap:12px;
+  font-weight:800; letter-spacing:.02em;
+}
+.brand-mark{
+  width:36px; height:36px; border:1px solid rgba(214,168,95,.55);
+  border-radius:50%; display:grid; place-items:center;
+  color:var(--accent); background:rgba(214,168,95,.07);
+  box-shadow:0 0 28px rgba(214,168,95,.12) inset;
+}
+.navlinks{display:flex; gap:18px; flex-wrap:wrap; justify-content:flex-end}
+.navlinks a{
+  color:var(--muted);
+  font-size:14px;
+  letter-spacing:.04em;
+}
+.navlinks a:hover{color:var(--text)}
+.hero{
+  padding:76px 0 44px;
+}
+.kicker{
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:.22em;
+  font-size:12px;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  margin-bottom:18px;
+}
+h1{
+  font-size:clamp(42px, 8vw, 92px);
+  line-height:.95;
+  letter-spacing:-.055em;
+  margin:0 0 24px;
+  max-width:980px;
+}
+.subtitle{
+  font-size:clamp(18px, 2.1vw, 25px);
+  color:var(--muted);
+  max-width:820px;
+  margin:0;
+}
+.hero-grid{
+  display:grid;
+  grid-template-columns:1.45fr .8fr;
+  gap:28px;
+  align-items:stretch;
+  margin-top:42px;
+}
+.card{
+  background:linear-gradient(180deg, rgba(23,28,36,.92), rgba(18,22,29,.92));
+  border:1px solid rgba(214,168,95,.18);
+  box-shadow:var(--shadow);
+  border-radius:22px;
+  padding:28px;
+}
+.card h2,.card h3{margin-top:0}
+.issue-card{
+  position:relative;
+  overflow:hidden;
+}
+.issue-card:before{
+  content:"";
+  position:absolute; inset:-2px;
+  background:radial-gradient(circle at 85% 20%, rgba(214,168,95,.18), transparent 34%);
+  pointer-events:none;
+}
+.issue-meta{
+  display:flex; flex-wrap:wrap; gap:10px;
+  margin-bottom:20px;
+  position:relative;
+}
+.badge{
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size:12px;
+  color:#111;
+  background:var(--accent);
+  border-radius:999px;
+  padding:5px 10px;
+  font-weight:700;
+}
+.badge.dark{
+  color:var(--text); background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+}
+.issue-title{
+  font-size:clamp(28px, 4vw, 48px);
+  line-height:1.05;
+  margin:0 0 16px;
+  letter-spacing:-.035em;
+  position:relative;
+}
+.issue-desc{color:var(--muted); margin-bottom:26px; position:relative}
+.button-row{display:flex; flex-wrap:wrap; gap:12px; position:relative}
+.btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  gap:8px; min-height:42px;
+  border-radius:12px;
+  padding:10px 16px;
+  border:1px solid rgba(214,168,95,.36);
+  background:rgba(214,168,95,.11);
+  color:var(--text);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-weight:700; font-size:14px;
+}
+.btn:hover{background:rgba(214,168,95,.18); text-decoration:none}
+.btn.primary{background:var(--accent); color:#111; border-color:var(--accent)}
+.btn.ghost{background:transparent; color:var(--muted)}
+.btn.blue{border-color:rgba(124,167,199,.45); background:rgba(124,167,199,.12)}
+.manifest{
+  color:var(--muted);
+  font-size:15px;
+}
+.manifest strong{color:var(--text)}
+.section{
+  padding:26px 0;
+}
+.section-title{
+  display:flex; align-items:end; justify-content:space-between; gap:20px;
+  border-bottom:1px solid var(--line);
+  padding-bottom:12px; margin-bottom:22px;
+}
+.section-title h2{font-size:26px; margin:0}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+.small-card{
+  background:rgba(18,22,29,.78);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;
+  padding:22px;
+}
+.small-card h3{margin:0 0 10px; color:var(--text)}
+.small-card p{margin:0; color:var(--muted); font-size:15px}
+.article-list{display:grid; gap:14px}
+.article{
+  background:rgba(18,22,29,.82);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;
+  padding:22px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:18px;
+}
+.article h3{margin:0 0 8px; font-size:22px}
+.article .meta{
+  color:var(--muted);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size:13px;
+}
+.article p{color:var(--muted); margin:12px 0 0}
+.notice{
+  background:rgba(183,95,95,.09);
+  border:1px solid rgba(183,95,95,.28);
+  color:#e3c7c7;
+  border-radius:16px;
+  padding:18px 20px;
+}
+.content{
+  width:min(860px, calc(100% - 36px));
+  margin:0 auto;
+  padding:58px 0 80px;
+}
+.content h1{
+  font-size:clamp(34px, 5.5vw, 64px);
+  line-height:1.05;
+}
+.content h2{
+  margin-top:42px;
+  padding-top:8px;
+  border-top:1px solid var(--line);
+  font-size:28px;
+}
+.content h3{font-size:22px; margin-top:30px}
+.content p,.content li{color:var(--text)}
+.content .lead{font-size:20px; color:var(--muted)}
+blockquote{
+  margin:28px 0;
+  padding:16px 22px;
+  border-left:3px solid var(--accent);
+  background:rgba(214,168,95,.07);
+  color:var(--muted);
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin:20px 0;
+  background:rgba(18,22,29,.7);
+  border-radius:14px;
+  overflow:hidden;
+}
+th,td{
+  border:1px solid var(--line);
+  padding:12px 14px;
+  vertical-align:top;
+}
+th{background:rgba(214,168,95,.11); color:var(--accent)}
+.footer{
+  border-top:1px solid var(--line);
+  color:var(--faint);
+  padding:30px 0 46px;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size:13px;
+}
+.footer .site{display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap}
+.footer a{color:var(--muted)}
+.code{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;
+  padding:.1em .35em;
+}
+@media(max-width:840px){
+  .hero-grid{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr}
+  .article{grid-template-columns:1fr}
+  .nav{align-items:flex-start; flex-direction:column}
+  .hero{padding-top:48px}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="site nav">
+    <a class="brand" href="./index.html"><span class="brand-mark">R</span><span>瑞瓦肖评论 / Revachol Review</span></a>
+    <nav class="navlinks">
+      <a href="./index.html">Current Issue</a>
+      <a href="./submissions.html">Submissions</a>
+      <a href="./editorial-office.html">Editorial Office</a>
+      <a href="./editorial-policy.html">Policy</a>
+      <a href="./legal-notice.html">Legal Notice</a>
+      <a href="./about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+
+<main class="content">
+  <div class="kicker">Editorial Office</div>
+  <h1>ChatGPT 辅助编辑部</h1>
+  <p class="lead">本刊不部署自动扣费 Agent。审稿辅助以 Prompt 和自定义 GPT 链接形式提供，由用户在自己的 ChatGPT 会话中运行。</p>
+
+  <h2>Workflow</h2>
+  <table>
+    <tr><th>Step</th><th>Action</th></tr>
+    <tr><td>1</td><td>作者下载或打开 Review Prompt。</td></tr>
+    <tr><td>2</td><td>作者在自己的 ChatGPT 账号中运行审稿。</td></tr>
+    <tr><td>3</td><td>作者将稿件与审稿报告一并提交 GitHub Issue。</td></tr>
+    <tr><td>4</td><td>金·曷城作出最终编辑决定。</td></tr>
+  </table>
+
+  <h2>Editorial Voice</h2>
+  <blockquote>【逻辑】事实核验不足。<br>【同理心】被害人位置被保留，但仍不够。<br>【修辞】文章结尾有力量，但需要降低泛化判断。<br>【编辑决定】Revise and resubmit.</blockquote>
+</main>
+
+
+<footer class="footer">
+  <div class="site">
+    <div>© 2026 Revachol Review. Independent open essay journal. Not peer-reviewed.</div>
+    <div>
+      <a href="./legal-notice.html">Legal Notice</a> ·
+      <a href="./editorial-policy.html">Editorial Policy</a> ·
+      <a href="./submissions.html">Submit</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
