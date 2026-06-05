@@ -2,21 +2,29 @@
 
 An Independent Open Essay Journal of Law, Narrative, and Public Cynicism.
 
-This folder is a starter kit for a personal open essay journal website. It can be uploaded to GitHub Pages or any static site host.
+This version includes:
 
-## Files
+- Visual GitHub Pages site
+- Submission portal
+- GitHub Issue submission form
+- GitHub Actions editorial agent
+- Prompt files for desk, risk, and style review
+- Editorial office page
 
-- `index.md`: homepage
-- `about.md`: about page
-- `editorial-policy.md`: editorial policy
-- `submissions.md`: submission guidelines
-- `vol1-no1/`: first issue
+See `AGENT_SETUP.md` for setup instructions.
 
-## Recommended Use
 
-1. Create a GitHub account such as `revachol-review`.
-2. Create repository `revachol-review.github.io`.
-3. Upload these files.
-4. Enable GitHub Pages.
-5. Upload article PDF/Markdown to Zenodo for DOI.
-6. Replace `10.5281/zenodo.xxxxxxx` with the real DOI.
+## Legal / Liability Pages
+
+This version includes `legal-notice.html` and `legal-notice.md`, covering:
+
+- independent open essay journal status;
+- no legal advice / no attorney-client relationship;
+- no peer-review or formal academic evaluation claim;
+- author responsibility for facts, sources, copyright, privacy, and defamation risks;
+- GitHub Issue public submission warning;
+- no server-side AI review and no OpenAI API usage by the site;
+- correction, retraction, and takedown policy;
+- no warranty and limitation of liability.
+
+Link this page in the footer and ask submitters to read it before opening a GitHub Issue.
